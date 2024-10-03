@@ -8,6 +8,17 @@
 
 import Foundation
 
+struct CoinData: Codable {
+    let asset_id_base: String
+    let rates: [Rate]
+}
+
+struct Rate: Codable {
+    let asset_id_quote: String
+    let rate: Double
+}
+
+
 struct CoinManager {
     
     let baseURL = "https://rest.coinapi.io/v1/exchangerate/BTC"
@@ -17,6 +28,18 @@ struct CoinManager {
 
     func getCurrPrice (_ curr: String) {
         perfomeRequest(with: baseURL + "?apikey=" + apiKey)
+    }
+    
+    func parseJSON(_ data: Data) -> Double? {
+        let decoder = JSONDecoder()
+        do {
+            let decodedData = try decoder.decode(CoinData.self, from: data)
+            let last = decodedData.rates.first?.rate
+            
+            return last
+        } catch {
+            return nil
+        }
     }
 
     func perfomeRequest (with url: String) {
@@ -30,6 +53,7 @@ struct CoinManager {
                 
                 if let selfData = data {
                     print(String(data: selfData, encoding: .utf8)!)
+                    print(parseJSON(selfData)!)
                 }
                 
             }
