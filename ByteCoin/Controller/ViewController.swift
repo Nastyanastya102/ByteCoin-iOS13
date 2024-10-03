@@ -15,6 +15,14 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     @IBOutlet weak var bitcoinLabel: UILabel!
     let coinMngr = CoinManager()
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        currencyPicker.dataSource = self
+        currencyPicker.delegate = self
+        // Do any additional setup after loading the view.
+    }
+    
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
@@ -29,23 +37,9 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         coinMngr.getCurrPrice(selectedCurrency)
     }
     
-    func pickerView(
-        _ pickerView: UIPickerView,
-        titleForRow row: Int,
-        forComponent component: Int
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int
     ) -> String? {
         return coinMngr.currencyArray[row]
     }
-
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        currencyPicker.dataSource = self
-        currencyPicker.delegate = self
-        // Do any additional setup after loading the view.
-    }
-
-
 }
 
