@@ -9,17 +9,19 @@
 import UIKit
 
 class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
+   
     
     @IBOutlet weak var currencyPicker: UIPickerView!
     @IBOutlet weak var currencyLabel: UILabel!
     @IBOutlet weak var bitcoinLabel: UILabel!
-    let coinMngr = CoinManager()
+    var coinMngr = CoinManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         currencyPicker.dataSource = self
         currencyPicker.delegate = self
+        coinMngr.delegate = self
         // Do any additional setup after loading the view.
     }
     
@@ -41,5 +43,22 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     ) -> String? {
         return coinMngr.currencyArray[row]
     }
+}
+
+
+//MARK: - CoinManagerDelegate
+
+extension ViewController: CoinManagerDelegate {
+    func didFailWithError(error: any Error) {
+        print(error)
+    }
+    
+    func updateLabel(_ coinManager: CoinManager, coin: Double) {
+        DispatchQueue.main.async {
+            print(coin)
+          self.bitcoinLabel.text = String(format: "%.2f", coin)
+        }
+    }
+    
 }
 

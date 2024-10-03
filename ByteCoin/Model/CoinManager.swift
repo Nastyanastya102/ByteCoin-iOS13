@@ -18,9 +18,13 @@ struct Rate: Codable {
     let rate: Double
 }
 
+protocol CoinManagerDelegate {
+    func didFailWithError(error: Error)
+    func updateLabel(_ coinManager: CoinManager, coin: Double)
+}
 
 struct CoinManager {
-    
+    var delegate: CoinManagerDelegate?
     let baseURL = "https://rest.coinapi.io/v1/exchangerate/BTC"
     let apiKey = ""
     
@@ -48,12 +52,14 @@ struct CoinManager {
             let task = session.dataTask(with: url) {
                 (data, responce, error) in
                 if error != nil {
+                    self.delegate?.didFailWithError(error: error!)
                     return
                 }
                 
                 if let selfData = data {
-                    print(String(data: selfData, encoding: .utf8)!)
-                    print(parseJSON(selfData)!)
+                    if let currData = self.parseJSON(selfData) {
+                         self.delegate?.updateLabel(self, coin: currData)
+                     }
                 }
                 
             }
